@@ -4,7 +4,6 @@ Demonstrates how to use the Multi-Agent Product Innovation System
 """
 import asyncio
 from my_agent.orchestrator import MAPISOrchestrator
-from my_agent.memory import session_service
 
 
 async def example_new_app_idea():

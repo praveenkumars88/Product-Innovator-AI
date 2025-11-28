@@ -8,25 +8,20 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
+from my_agent.orchestrator import MAPISOrchestrator
+from my_agent.utils.logger import logger
+from my_agent.utils.file_output import save_outputs_to_files
+
 # Load environment variables from .env file
-# Get the project root directory (where this file is located)
 project_root = Path(__file__).parent
 env_path = project_root / '.env'
 load_dotenv(dotenv_path=env_path)
 
-# Verify API key is loaded (for debugging)
+# Verify API key is loaded
 if not os.getenv('GOOGLE_API_KEY'):
-    print("Warning: GOOGLE_API_KEY not found in environment variables.")
-    print(f"Looking for .env file at: {env_path}")
+    logger.warning("GOOGLE_API_KEY not found in environment variables", env_path=str(env_path))
     if not env_path.exists():
-        print(f".env file not found at {env_path}")
-    print("Please ensure GOOGLE_API_KEY is set in your .env file.")
-    print()
-
-from my_agent.orchestrator import MAPISOrchestrator
-from my_agent.memory import session_service
-from my_agent.utils.logger import logger
-from my_agent.utils.file_output import save_outputs_to_files
+        logger.warning(".env file not found", path=str(env_path))
 
 
 async def main():
@@ -136,9 +131,9 @@ async def main():
         
     except Exception as e:
         logger.error("Main execution failed", error=str(e))
-        print(f"\nError: {str(e)}")
         import traceback
-        traceback.print_exc()
+        logger.error("Traceback", traceback=traceback.format_exc())
+        print(f"\nError: {str(e)}")
 
 
 if __name__ == "__main__":

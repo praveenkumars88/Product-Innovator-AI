@@ -12,8 +12,6 @@ class GoogleSearchMCP:
     """Google Search MCP tool wrapper"""
     
     def __init__(self):
-        # In a real implementation, this would connect to the MCP server
-        # For now, we'll create a placeholder that can be extended
         logger.info("GoogleSearchMCP initialized")
     
     async def search(self, query: str, max_results: int = 5) -> List[Dict[str, Any]]:
@@ -29,11 +27,7 @@ class GoogleSearchMCP:
         """
         logger.info(f"Searching Google: {query}", query=query, max_results=max_results)
         
-        # TODO: Integrate with actual Google Search MCP server
-        # This is a placeholder implementation
-        # In production, this would call the MCP server
-        
-        # Placeholder response structure
+        # Placeholder implementation - integrate with actual Google Search MCP server in production
         results = [
             {
                 "title": f"Result for: {query}",
