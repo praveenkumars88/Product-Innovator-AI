@@ -4,9 +4,29 @@ Multi-Agent Product Innovation System
 """
 import asyncio
 import sys
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+# Get the project root directory (where this file is located)
+project_root = Path(__file__).parent
+env_path = project_root / '.env'
+load_dotenv(dotenv_path=env_path)
+
+# Verify API key is loaded (for debugging)
+if not os.getenv('GOOGLE_API_KEY'):
+    print("Warning: GOOGLE_API_KEY not found in environment variables.")
+    print(f"Looking for .env file at: {env_path}")
+    if not env_path.exists():
+        print(f".env file not found at {env_path}")
+    print("Please ensure GOOGLE_API_KEY is set in your .env file.")
+    print()
+
 from my_agent.orchestrator import MAPISOrchestrator
 from my_agent.memory import session_service
 from my_agent.utils.logger import logger
+from my_agent.utils.file_output import save_outputs_to_files
 
 
 async def main():
@@ -96,8 +116,22 @@ async def main():
             concept = result.get("concept_paper", {}).get("full_text", "")
             print(concept[:500] + "..." if len(concept) > 500 else concept)
         
+        # Save outputs to files
         print("\n" + "=" * 60)
-        print("Full results saved to session memory.")
+        print("Saving outputs to files...")
+        saved_files = save_outputs_to_files(result, session_id="session_1")
+        
+        if saved_files:
+            print(f"\n✓ Saved {len(saved_files)} output files:")
+            for output_type, file_path in saved_files.items():
+                if output_type != "complete_results":  # Don't show JSON file in summary
+                    print(f"  - {output_type.replace('_', ' ').title()}: {file_path}")
+            print(f"\nAll files saved to: {Path(saved_files.get('readme', '')).parent if saved_files.get('readme') else 'outputs/'}")
+        else:
+            print("⚠ No files were saved.")
+        
+        print("\n" + "=" * 60)
+        print("Full results saved to session memory and files.")
         print("=" * 60)
         
     except Exception as e:

@@ -212,10 +212,13 @@ class MAPISOrchestrator:
             results["wireframes"] = wireframe_result
             session_service.add_to_history(session_id, "wireframes", screens, wireframe_result)
             
-            # Step 5: Architecture (for feature integration)
-            architecture_result = await self.architecture_agent.suggest(feature_result, features)
-            results["architecture"] = architecture_result
-            session_service.add_to_history(session_id, "architecture", feature_result, architecture_result)
+            # Step 5: Pitch Creation (for feature extension)
+            pitch_result = await self.pitch_agent.create(feature_result, None, competitor_result)
+            results["pitch"] = pitch_result
+            session_service.add_to_history(session_id, "pitch", feature_result, pitch_result)
+            
+            # Note: Architecture is NOT generated for feature extensions
+            # Feature extensions integrate with existing architecture
             
             # Final aggregation
             results["status"] = "success"

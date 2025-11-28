@@ -66,24 +66,30 @@ Write in professional, enterprise-grade format."""
                 for story in feature_context['user_stories'][:5]:
                     context += f"- {story}\n"
             
-            prompt = f"""Write a comprehensive concept paper for this feature/product:
+            prompt = f"""Write a concise, well-structured concept paper for this feature/product:
 
 {context}
 
-Include all sections:
-1. Executive Summary (1-2 paragraphs)
-2. Background (context and motivation)
-3. Problem Statement (clear problem definition)
-4. Personas (2-3 key personas)
-5. Proposed Solution (detailed solution description)
-6. User Journeys (step-by-step flows)
-7. Technical Overview (architecture, integrations)
-8. KPIs (key performance indicators)
-9. Risks & Mitigation (potential risks and solutions)
-10. Rollout Plan (phased approach)
-11. Open Questions (unresolved items)
+Requirements:
+- Keep each section concise and focused
+- Use bullet points where appropriate
+- Avoid overly long paragraphs (max 3-4 sentences per paragraph)
+- Be clear and direct, avoid unnecessary verbosity
 
-Write in professional, enterprise-grade format suitable for stakeholders."""
+Include all sections:
+1. Executive Summary (2-3 concise paragraphs summarizing the key points)
+2. Background (brief context, 1-2 paragraphs)
+3. Problem Statement (clear, bulleted list of problems)
+4. Personas (2-3 key personas, brief descriptions with key points)
+5. Proposed Solution (structured solution with key components as bullets)
+6. User Journeys (concise step-by-step flows, use numbered lists)
+7. Technical Overview (high-level architecture, key integrations, bullet format)
+8. KPIs (key performance indicators as a bulleted list)
+9. Risks & Mitigation (brief table or bullet list format)
+10. Rollout Plan (phased approach with clear phases)
+11. Open Questions (brief list of unresolved items)
+
+Write in professional, enterprise-grade format but keep it concise and scannable. Use formatting (bullets, numbered lists, tables) to improve readability."""
             
             response = await call_agent(self.agent, prompt)
             
