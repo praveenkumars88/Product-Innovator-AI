@@ -6,6 +6,7 @@ from google.adk.agents.llm_agent import Agent
 from typing import Dict, Any
 import structlog
 from ..utils.agent_helper import call_agent
+from ..utils.prompts import PITCH_CREATOR_INSTRUCTION, PITCH_CREATOR_PROMPT_TEMPLATE
 
 logger = structlog.get_logger(__name__)
 
@@ -23,18 +24,7 @@ class PitchCreatorAgent:
         logger.info("PitchCreatorAgent initialized")
     
     def _get_instruction(self) -> str:
-        return """You are a Pitch Creator Agent for a Product Innovation System.
-
-Your task is to create compelling visual pitch deck slides in Marp format (Markdown Presentation).
-
-Each slide should be:
-- Visually appealing with clear structure
-- Concise (3-5 bullet points max per slide)
-- Use appropriate slide titles
-- Include visual elements descriptions where helpful
-
-Format: Use Marp slide format with --- separator between slides.
-Each slide should have a clear title and focused content."""
+        return PITCH_CREATOR_INSTRUCTION
     
     async def create(self, idea_context: Dict[str, Any], market_data: Dict[str, Any] = None, competitor_data: Dict[str, Any] = None) -> Dict[str, Any]:
         """
@@ -87,43 +77,7 @@ Each slide should have a clear title and focused content."""
                     raw_analysis = competitor_data.get('raw_analysis', '')
                     context += f"Differentiation: {raw_analysis[:300]}...\n"
             
-            prompt = f"""Create a compelling visual pitch deck in Marp format (Markdown Presentation) for this product:
-
-{context}
-
-Create 8-10 slides using Marp format. Use --- to separate slides.
-
-Slide Structure:
-1. Title Slide: Product/Feature Name + Tagline
-2. The Problem: Clear pain points (3-4 bullets)
-3. The Solution: What you're building (3-4 bullets)
-4. Key Features: Top 4-5 features (bullet format)
-5. Market Opportunity: TAM/SAM/SOM with numbers
-6. Competitive Advantage: Why you'll win (3-4 points)
-7. Business Model: Revenue streams (clear bullets)
-8. Traction/Milestones: If applicable
-9. Ask/Next Steps: What you need (call to action)
-10. Closing: Memorable closing statement
-
-Format Requirements:
-- Use --- to separate each slide
-- Each slide starts with # Title
-- Use bullet points (• or -)
-- Keep text concise (3-5 bullets per slide max)
-- Use **bold** for emphasis
-- Add visual descriptions in parentheses where helpful (e.g., "Chart showing growth", "Icon representing feature")
-
-Example format:
----
-# Slide Title
-
-• Key point 1
-• Key point 2
-• Key point 3
-
----
-
-Write in engaging, persuasive startup pitch style suitable for investors or stakeholders. Make it visual and impactful."""
+            prompt = PITCH_CREATOR_PROMPT_TEMPLATE.format(context=context)
             
             response = await call_agent(self.agent, prompt)
             

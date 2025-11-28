@@ -7,6 +7,7 @@ from typing import Dict, Any
 import json
 import structlog
 from ..utils.agent_helper import call_agent
+from ..utils.prompts import INTENT_CLASSIFICATION_INSTRUCTION
 
 logger = structlog.get_logger(__name__)
 
@@ -24,27 +25,7 @@ class IntentClassificationAgent:
         logger.info("IntentClassificationAgent initialized")
     
     def _get_instruction(self) -> str:
-        return """You are an Intent Classification Agent for a Product Innovation System.
-
-Your task is to analyze user input and determine:
-1. Intent type: "new_app_idea" or "feature_extension"
-2. Domain (if identifiable): e.g., "EdTech", "FinTech", "HealthTech", "Travel", etc.
-3. Keywords: Important terms from the user's request
-
-Output your response as a JSON object with this exact structure:
-{
-  "intent": "new_app_idea" | "feature_extension",
-  "domain": "domain_name or null",
-  "keywords": ["keyword1", "keyword2", ...],
-  "confidence": 0.0-1.0
-}
-
-Examples:
-- "Give me a new idea in the EdTech domain" → {"intent": "new_app_idea", "domain": "EdTech", ...}
-- "Add a voice ordering feature for Swiggy" → {"intent": "feature_extension", "domain": "FoodTech", ...}
-- "Enhance Instagram Reels analytics" → {"intent": "feature_extension", "domain": "SocialMedia", ...}
-
-Be precise and return only valid JSON."""
+        return INTENT_CLASSIFICATION_INSTRUCTION
     
     async def classify(self, user_input: str) -> Dict[str, Any]:
         """

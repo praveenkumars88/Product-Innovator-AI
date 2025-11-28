@@ -6,6 +6,7 @@ from google.adk.agents.llm_agent import Agent
 from typing import Dict, Any, List
 import structlog
 from ..utils.agent_helper import call_agent
+from ..utils.prompts import FEATURE_DESIGN_INSTRUCTION, FEATURE_DESIGN_PROMPT_TEMPLATE
 
 logger = structlog.get_logger(__name__)
 
@@ -23,17 +24,7 @@ class FeatureDesignAgent:
         logger.info("FeatureDesignAgent initialized")
     
     def _get_instruction(self) -> str:
-        return """You are a Feature Design Agent for a Product Innovation System.
-
-Your task is to design features for existing applications. You need to:
-1. Understand existing user flows
-2. Identify UX impacts of the new feature
-3. Break feature into epics and user stories
-4. Define acceptance criteria
-5. Identify integration points
-6. Consider backward compatibility
-
-Provide detailed feature specifications."""
+        return FEATURE_DESIGN_INSTRUCTION
     
     async def design(self, app_name: str, feature_request: str, existing_context: Dict[str, Any] = None) -> Dict[str, Any]:
         """
@@ -54,20 +45,7 @@ Provide detailed feature specifications."""
             if existing_context:
                 context += f"Existing Context: {existing_context}\n"
             
-            prompt = f"""Design this feature for the existing application:
-
-{context}
-
-Provide:
-1. Feature Overview (2-3 sentences)
-2. User Journey (step-by-step flow)
-3. Epics (2-3 major epics)
-4. User Stories (5-7 user stories with format: "As a [user], I want [goal] so that [benefit]")
-5. Acceptance Criteria (for each user story)
-6. UX Impact Analysis (how this affects existing flows)
-7. Integration Points (where this connects to existing features)
-8. Technical Considerations (APIs, data, services needed)
-9. Backward Compatibility (how to ensure existing users aren't affected)"""
+            prompt = FEATURE_DESIGN_PROMPT_TEMPLATE.format(context=context)
             
             response = await call_agent(self.agent, prompt)
             

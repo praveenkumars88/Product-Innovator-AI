@@ -7,6 +7,7 @@ from typing import Dict, Any, List
 import structlog
 from ..tools.google_search import google_search
 from ..utils.agent_helper import call_agent
+from ..utils.prompts import DOMAIN_UNDERSTANDING_INSTRUCTION, DOMAIN_UNDERSTANDING_PROMPT_TEMPLATE
 
 logger = structlog.get_logger(__name__)
 
@@ -24,16 +25,7 @@ class DomainUnderstandingAgent:
         logger.info("DomainUnderstandingAgent initialized")
     
     def _get_instruction(self) -> str:
-        return """You are a Domain Understanding Agent for a Product Innovation System.
-
-Your task is to analyze a given domain and provide:
-1. Pain Points: Key problems users face in this domain
-2. User Segments: Different types of users/customers
-3. Trends: Current and emerging trends
-4. Market Gaps: Opportunities for new products/features
-5. Key Players: Major companies/products in this space
-
-Provide a comprehensive analysis in a structured format."""
+        return DOMAIN_UNDERSTANDING_INSTRUCTION
     
     async def analyze(self, domain: str, keywords: List[str] = None) -> Dict[str, Any]:
         """
@@ -61,14 +53,7 @@ Provide a comprehensive analysis in a structured format."""
                 for result in trends_results[:3]:
                     context += f"- {result.get('title', '')}: {result.get('snippet', '')}\n"
             
-            prompt = f"""Analyze the {domain} domain and provide:
-1. Top 5 pain points users face
-2. 3-5 key user segments
-3. Current trends (2024-2025)
-4. Market gaps and opportunities
-5. Key players in this space
-
-{context}"""
+            prompt = DOMAIN_UNDERSTANDING_PROMPT_TEMPLATE.format(domain=domain, context=context)
             
             response = await call_agent(self.agent, prompt)
             

@@ -7,6 +7,7 @@ from typing import Dict, Any
 import structlog
 from ..tools.google_search import google_search
 from ..utils.agent_helper import call_agent
+from ..utils.prompts import MARKET_SIZE_INSTRUCTION, MARKET_SIZE_PROMPT_TEMPLATE
 
 logger = structlog.get_logger(__name__)
 
@@ -24,14 +25,7 @@ class MarketSizeAgent:
         logger.info("MarketSizeAgent initialized")
     
     def _get_instruction(self) -> str:
-        return """You are a Market Size Agent for a Product Innovation System.
-
-Your task is to calculate:
-1. TAM (Total Addressable Market) - total market demand
-2. SAM (Serviceable Addressable Market) - portion of TAM you can serve
-3. SOM (Serviceable Obtainable Market) - realistic market share you can capture
-
-Provide market size estimates with methodology and assumptions."""
+        return MARKET_SIZE_INSTRUCTION
     
     async def calculate(self, domain: str, product_type: str, region: str = "global", idea_context: Dict[str, Any] = None) -> Dict[str, Any]:
         """
@@ -60,29 +54,7 @@ Provide market size estimates with methodology and assumptions."""
                 for result in market_data[:3]:
                     context += f"- {result.get('title', '')}: {result.get('snippet', '')}\n"
             
-            prompt = f"""Calculate market size for this product:
-
-{context}
-
-Provide:
-1. TAM (Total Addressable Market)
-   - Value in USD
-   - Methodology
-   - Assumptions
-2. SAM (Serviceable Addressable Market)
-   - Value in USD
-   - Percentage of TAM
-   - Target segments
-3. SOM (Serviceable Obtainable Market)
-   - Value in USD (Year 1, Year 3, Year 5)
-   - Market share assumptions
-   - Growth projections
-4. Pricing Model Suggestions
-   - Revenue per user/customer
-   - Pricing tiers
-5. Market Growth Trends
-   - CAGR (if available)
-   - Growth drivers"""
+            prompt = MARKET_SIZE_PROMPT_TEMPLATE.format(context=context)
             
             response = await call_agent(self.agent, prompt)
             

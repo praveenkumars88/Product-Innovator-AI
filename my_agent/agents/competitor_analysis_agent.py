@@ -7,6 +7,7 @@ from typing import Dict, Any, List
 import structlog
 from ..tools.google_search import google_search
 from ..utils.agent_helper import call_agent
+from ..utils.prompts import COMPETITOR_ANALYSIS_INSTRUCTION, COMPETITOR_ANALYSIS_PROMPT_TEMPLATE
 
 logger = structlog.get_logger(__name__)
 
@@ -24,16 +25,7 @@ class CompetitorAnalysisAgent:
         logger.info("CompetitorAnalysisAgent initialized")
     
     def _get_instruction(self) -> str:
-        return """You are a Competitor Analysis Agent for a Product Innovation System.
-
-Your task is to:
-1. Identify top competitors in the space
-2. Compare features across competitors
-3. Identify gaps and opportunities
-4. Suggest differentiation strategies
-5. Analyze market positioning
-
-Provide comprehensive competitive intelligence."""
+        return COMPETITOR_ANALYSIS_INSTRUCTION
     
     async def analyze(self, domain: str, product_type: str, idea_context: Dict[str, Any] = None) -> Dict[str, Any]:
         """
@@ -62,17 +54,7 @@ Provide comprehensive competitive intelligence."""
                 for i, result in enumerate(competitor_results[:5], 1):
                     context += f"{i}. {result.get('title', '')}\n   {result.get('snippet', '')}\n\n"
             
-            prompt = f"""Analyze competitors for this product:
-
-{context}
-
-Provide:
-1. Top 5 Competitors (name, description, key features)
-2. Feature Comparison Matrix (compare key features across competitors)
-3. Market Gaps (what competitors are missing)
-4. Differentiation Opportunities (how to stand out)
-5. Pricing Models (if available)
-6. Market Positioning (where each competitor sits)"""
+            prompt = COMPETITOR_ANALYSIS_PROMPT_TEMPLATE.format(context=context)
             
             response = await call_agent(self.agent, prompt)
             

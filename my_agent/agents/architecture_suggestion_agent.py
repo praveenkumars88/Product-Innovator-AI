@@ -6,6 +6,7 @@ from google.adk.agents.llm_agent import Agent
 from typing import Dict, Any, List
 import structlog
 from ..utils.agent_helper import call_agent
+from ..utils.prompts import ARCHITECTURE_INSTRUCTION, ARCHITECTURE_PROMPT_TEMPLATE
 
 logger = structlog.get_logger(__name__)
 
@@ -23,17 +24,7 @@ class ArchitectureSuggestionAgent:
         logger.info("ArchitectureSuggestionAgent initialized")
     
     def _get_instruction(self) -> str:
-        return """You are an Architecture Suggestion Agent for a Product Innovation System.
-
-Your task is to design technical architecture for products. Provide:
-1. System architecture (high-level components)
-2. Services required (microservices, APIs, etc.)
-3. Database design (data models, storage)
-4. Third-party integrations
-5. Scalability considerations
-6. Technology stack recommendations
-
-Provide comprehensive technical blueprints."""
+        return ARCHITECTURE_INSTRUCTION
     
     async def suggest(self, idea_context: Dict[str, Any], features: List[str] = None) -> Dict[str, Any]:
         """
@@ -56,20 +47,7 @@ Provide comprehensive technical blueprints."""
                 for i, feature in enumerate(features, 1):
                     context += f"{i}. {feature}\n"
             
-            prompt = f"""Design technical architecture for this product:
-
-{context}
-
-Provide:
-1. System Architecture Overview (high-level diagram description)
-2. Core Services (list of microservices/modules needed)
-3. Database Design (data models, storage requirements)
-4. API Design (key endpoints, data flows)
-5. Third-Party Integrations (external services, APIs, SDKs)
-6. Technology Stack (recommended languages, frameworks, tools)
-7. Scalability Considerations (how to handle growth)
-8. Security Considerations (authentication, data protection)
-9. Deployment Strategy (cloud, on-premise, hybrid)"""
+            prompt = ARCHITECTURE_PROMPT_TEMPLATE.format(context=context)
             
             response = await call_agent(self.agent, prompt)
             

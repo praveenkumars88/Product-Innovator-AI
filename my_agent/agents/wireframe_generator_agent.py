@@ -7,6 +7,7 @@ from typing import Dict, Any, List
 import structlog
 from ..tools.code_execution import code_execution
 from ..utils.agent_helper import call_agent
+from ..utils.prompts import WIREFRAME_INSTRUCTION, WIREFRAME_PROMPT_TEMPLATE
 
 logger = structlog.get_logger(__name__)
 
@@ -24,15 +25,7 @@ class WireframeGeneratorAgent:
         logger.info("WireframeGeneratorAgent initialized")
     
     def _get_instruction(self) -> str:
-        return """You are a Wireframe Generator Agent for a Product Innovation System.
-
-Your task is to create ASCII-style wireframes for product screens. For each screen:
-1. Identify key UI elements
-2. Layout structure
-3. Navigation flow
-4. User interactions
-
-Generate clear, readable ASCII wireframes."""
+        return WIREFRAME_INSTRUCTION
     
     async def generate(self, screens: List[str], features: List[str] = None, context: Dict[str, Any] = None) -> Dict[str, Any]:
         """
@@ -53,11 +46,13 @@ Generate clear, readable ASCII wireframes."""
             
             for screen in screens:
                 # Use agent to identify elements
-                prompt = f"""Create a wireframe for this screen: {screen}
-                
-Features to include: {', '.join(features) if features else 'All relevant features'}
-
-Identify the key UI elements and their layout."""
+                features_str = ', '.join(features) if features else 'All relevant features for this screen'
+                product_context = str(context.get('original_idea', context.get('feature_request', 'N/A')))[:200] if context else 'N/A'
+                prompt = WIREFRAME_PROMPT_TEMPLATE.format(
+                    screen=screen,
+                    features=features_str,
+                    product_context=product_context
+                )
                 
                 agent_response = await call_agent(self.agent, prompt)
                 
