@@ -209,5 +209,6 @@ python example_usage.py
 
 ## Contributors
 
-- Praveenkumar S - Initial implementation
+- Praveenkumar S
+- Aravind V
 
