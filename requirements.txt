@@ -1,0 +1,26 @@
+# Multi-Agent Product Innovation System (MAPIS)
+# Core Dependencies
+
+# Google ADK
+google-adk
+
+# MCP Tools
+mcp
+
+# Memory and Session Management
+# (InMemorySessionService is typically part of ADK)
+
+# Utilities
+python-dotenv
+pydantic>=2.0.0
+
+# Logging and Observability
+structlog
+
+# For market calculations
+numpy
+pandas
+
+# For PDF generation (optional)
+reportlab
+
