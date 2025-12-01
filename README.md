@@ -39,9 +39,10 @@ Competitor Agent → Wireframe Agent → Architecture Agent → Output
 pip install -r requirements.txt
 ```
 
-2. Set up environment variables (if needed):
+2. Set up environment variables:
 ```bash
 cp .env.example .env
+# Edit .env and add your Google API key
 ```
 
 3. Run the system:

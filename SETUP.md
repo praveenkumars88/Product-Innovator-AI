@@ -29,14 +29,11 @@ If Google ADK is not available, you can modify the agents to use:
 - Anthropic Claude API
 - Or other LLM providers
 
-### 3. Set Up Environment Variables (Optional)
+### 3. Set Up Environment Variables
 
 ```bash
-# Copy the example env file
 cp .env.example .env
-
-# Edit .env with your API keys
-# GOOGLE_API_KEY=your_key_here
+# Edit .env and add your Google API key
 ```
 
 ### 4. Run MAPIS

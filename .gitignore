@@ -1,5 +1,18 @@
 outputs/
+
+# Environment variables and secrets
 .env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+*.secret
+
+# API keys and credentials (extra safety)
+*api*key*.txt
+*credentials*.json
+*service-account*.json
 
 # Python cache files
 __pycache__/
