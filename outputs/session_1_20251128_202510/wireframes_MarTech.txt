@@ -1,0 +1,26 @@
+## Feature Screen
+
+
+[Feature Screen]
+--------------------------------------------------
+| User Profile                                   |
+| Input Field                                    |
+| Dropdown                                       |
+| Image                                          |
+| Text Area                                      |
+--------------------------------------------------
+
+
+## Settings
+
+
+[Settings]
+--------------------------------------------------
+| User Profile                                   |
+| Settings                                       |
+| Back Button                                    |
+| Input Field                                    |
+| Dropdown                                       |
+--------------------------------------------------
+
+
